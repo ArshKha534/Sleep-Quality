@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Quality Predictor</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f0f2f5; }
+        .card { background: white; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, button { padding: 10px; margin: 10px; width: 80%; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Sleep Predictor</h2>
+        <input type="number" id="hours" placeholder="How many hours did you sleep?">
+        <button onclick="getPrediction()">Predict Quality</button>
+        <h3 id="result"></h3>
+    </div>
+
+    <script>
+        async function getPrediction() {
+            const hoursInput = document.getElementById('hours').value;
+            const resultElement = document.getElementById('result');
+            resultElement.innerText = "Calculating...";
+
+            // We will paste your Google Colab link right below in the next steps!
+            const colabUrl = "YOUR_COLAB_URL_HERE"; 
+
+            try {
+                const response = await fetch(colabUrl + "/predict", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hours: hoursInput })
+                });
+                const data = await response.json();
+                resultElement.innerText = "Your Sleep Quality: " + data.quality;
+            } catch (error) {
+                resultElement.innerText = "Error connecting to AI. Make sure Colab is running!";
+            }
+        }
+    </script>
+</body>
+</html>
