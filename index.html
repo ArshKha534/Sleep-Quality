@@ -31,7 +31,10 @@
             try {
                 const response = await fetch(colabUrl + "/predict", {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true' // 👈 Add this exact line!
+                    },
                     body: JSON.stringify({ hours: hoursInput })
                 });
                 const data = await response.json();
