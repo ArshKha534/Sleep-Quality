@@ -5,42 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleep Quality Predictor</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f0f2f5; }
-        .card { background: white; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input, button { padding: 10px; margin: 10px; width: 80%; border-radius: 5px; border: 1px solid #ccc; }
-        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+        body { font-family: sans-serif; background-color: #f0f2f5; padding: 40px 20px; text-align: center; }
+        .card { background: white; padding: 30px; border-radius: 12px; max-width: 450px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: left; }
+        h2 { text-align: center; margin-bottom: 5px; color: #111; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; color: #333; font-size: 14px; }
+        input[type="number"], select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-size: 15px; }
+        .slider-container { display: flex; align-items: center; gap: 15px; }
+        input[type="range"] { flex: 1; }
+        .slider-val { font-weight: bold; min-width: 20px; text-align: right; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background-color: #0056b3; }
+        #result { text-align: center; margin-top: 25px; font-size: 18px; color: #007bff; font-weight: bold; min-height: 24px; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2>Sleep Predictor</h2>
-        <input type="number" id="hours" placeholder="How many hours did you sleep?">
+        <p class="subtitle">Enter your metrics for an AI-generated assessment</p>
+        
+        <div class="form-group">
+            <label for="hours">Sleep Duration (Hours)</label>
+            <input type="number" id="hours" placeholder="e.g. 7.5" step="0.1" min="0" max="24">
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" placeholder="e.g. 25" min="1" max="120">
+        </div>
+
+        <div class="form-group">
+            <label for="stress">Stress Level (1-10)</label>
+            <div class="slider-container">
+                <input type="range" id="stress" min="1" max="10" value="5" oninput="document.getElementById('stressVal').innerText = this.value">
+                <span class="slider-val" id="stressVal">5</span>
+            </div>
+        </div>
+
         <button onclick="getPrediction()">Predict Quality</button>
-        <h3 id="result"></h3>
+        <div id="result"></div>
     </div>
 
     <script>
         async function getPrediction() {
-            const hoursInput = document.getElementById('hours').value;
+            const hours = document.getElementById('hours').value;
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const stress = document.getElementById('stress').value;
             const resultElement = document.getElementById('result');
-            resultElement.innerText = "Calculating...";
+            
+            if (!hours || !age) {
+                resultElement.innerText = "⚠️ Please fill out all fields!";
+                return;
+            }
 
-            // We will paste your Google Colab link right below in the next steps!
-            const colabUrl = "https://online-obnoxious-disabled.ngrok-free.dev"; 
+            resultElement.innerText = "🔄 Neural Network calculating...";
+
+            // ⚠️ PASTE YOUR NGROK URL HERE (No trailing slash / at the end)
+            const colabUrl = "PASTE_YOUR_NGROK_URL_HERE"; 
 
             try {
                 const response = await fetch(colabUrl + "/predict", {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true' // 👈 Add this exact line!
-                    },
-                    body: JSON.stringify({ hours: hoursInput })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        hours: parseFloat(hours), 
+                        gender: gender, 
+                        age: parseInt(age), 
+                        stress: parseInt(stress) 
+                    })
                 });
+                
                 const data = await response.json();
-                resultElement.innerText = "Your Sleep Quality: " + data.quality;
+                resultElement.innerText = "Predicted Sleep Quality: " + data.quality;
             } catch (error) {
-                resultElement.innerText = "Error connecting to AI. Make sure Colab is running!";
+                resultElement.innerText = "❌ Connection failed. Check if Colab is running!";
+                console.error(error);
             }
         }
     </script>
