@@ -70,7 +70,7 @@
 
             resultElement.innerText = "🔄 Neural Network calculating...";
 
-            // ⚠️ PASTE YOUR NGROK URL HERE (No trailing slash / at the end)
+            //PASTE YOUR NGROK URL HERE (No trailing slash / at the end)
             const colabUrl = "https://online-obnoxious-disabled.ngrok-free.dev"; 
 
             try {
@@ -88,7 +88,7 @@
                 const data = await response.json();
                 resultElement.innerText = "Predicted Sleep Quality: " + data.quality;
             } catch (error) {
-                resultElement.innerText = "❌ Connection failed. Check if Colab is running!";
+                resultElement.innerText = "Connection failed. Check if Colab is running!";
                 console.error(error);
             }
         }
